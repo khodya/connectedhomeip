@@ -431,8 +431,8 @@ class TC_CNET_4_12(MatterBaseTest):
 
         # Expire the session and re-establish the new session reading attribute (Breadcrum)
         # resp = self.default_controller.ExpireSessions(self.dut_node_id)
-        logger.info(f'Step #17: Expire the session and re-establish the new session: {resp}')
-        await asyncio.sleep(connect_max_time_seconds + 5)
+        # logger.info(f'Step #17: Expire the session and re-establish the new session: {resp}')
+        # await asyncio.sleep(connect_max_time_seconds + 5)
 
         self.step(18)
         breadcrumb_info = await self.read_single_attribute_check_success(
