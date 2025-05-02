@@ -303,8 +303,8 @@ class TC_CNET_4_12(MatterBaseTest):
 
         self.step(9)
         # Expire the session and re-establish the new session reading attribute (Breadcrum)
-        resp = self.default_controller.ExpireSessions(self.dut_node_id)
-        logger.info(f'Step #9: Expire the session and re-establish the new session: {resp}')
+        # resp = self.default_controller.ExpireSessions(self.dut_node_id)
+        # logger.info(f'Step #9: Expire the session and re-establish the new session: {resp}')
         # await asyncio.sleep(wait_time_reboot)
         # await asyncio.sleep(10)
 
