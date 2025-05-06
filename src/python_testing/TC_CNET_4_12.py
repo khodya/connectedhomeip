@@ -222,6 +222,13 @@ class TC_CNET_4_12(MatterBaseTest):
         logger.info(f'Step #3: Networks attribute: {userth_netidx}')
         asserts.assert_true(userth_netidx is not None, "Thread network not found")
 
+        # Read the ConnectMaxTimeSeconds attribute after attempting to connect
+        connect_max_time_seconds = await self.read_single_attribute_check_success(
+            cluster=Clusters.NetworkCommissioning,
+            attribute=Clusters.NetworkCommissioning.Attributes.ConnectMaxTimeSeconds
+        )
+        logger.info(f'ConnectMaxTimeSeconds value: {connect_max_time_seconds}')
+
         self.step(4)
         cmd = Clusters.NetworkCommissioning.Commands.RemoveNetwork(networkID=thread_network_id_bytes_th1, breadcrumb=1)
         resp = await self.send_single_cmd(
@@ -271,23 +278,16 @@ class TC_CNET_4_12(MatterBaseTest):
             dev_ctrl=self.default_controller,
             node_id=self.dut_node_id,
             cmd=cmd,
-            
+
         )
         logger.info(f'Step #7: ConnectNetwork resp VARS ({vars(resp)})')
         logger.info(f'Step #7: ConnectNetwork Status is success ({resp.networkingStatus})')
         # Verify that the DUT responds with AddThreadNConnectNetworketwork with NetworkingStatus as 'Success'(0)
         asserts.assert_equal(resp.networkingStatus, Clusters.NetworkCommissioning.Enums.NetworkCommissioningStatusEnum.kSuccess,
                              "Failure status returned from ConnectNetwork")
-        
+
         await asyncio.sleep(60)
         logger.info("sleep completed")
-
-        # Read the ConnectMaxTimeSeconds attribute after attempting to connect
-        connect_max_time_seconds = await self.read_single_attribute_check_success(
-            cluster=Clusters.NetworkCommissioning,
-            attribute=Clusters.NetworkCommissioning.Attributes.ConnectMaxTimeSeconds
-        )
-        logger.info(f'Step #7: ConnectMaxTimeSeconds value: {connect_max_time_seconds}')
 
         # Wait for the device to establish connection with the new Thread network
         # await asyncio.sleep(connect_max_time_seconds + 5)
@@ -452,11 +452,10 @@ class TC_CNET_4_12(MatterBaseTest):
         )
         logger.info(f'Step #19: CommissioningComplete response ({vars(resp)})')
         logger.info(f'Step #19: CommissioningComplete Status is success ({resp.errorCode})')
-        # Verify that the DUT responds with CommissioningComplete with ErrorCode as 'OK'(0) 
+        # Verify that the DUT responds with CommissioningComplete with ErrorCode as 'OK'(0)
         asserts.assert_equal(resp.errorCode, Clusters.GeneralCommissioning.Enums.CommissioningErrorEnum.kOk,
                              "Failure status returned from CommissioningComplete")
         # TODO: Implement TH sends the CommissioningComplete and CommissioningCompleteResponse with the ErrorCode OK (0)
-
 
         self.step(20)
         networks = await self.read_single_attribute_check_success(
