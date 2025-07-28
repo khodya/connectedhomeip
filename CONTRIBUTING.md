@@ -279,4 +279,4 @@ the PR")
 
 ### Hidden chapter
 
-Hidden paragraph
+Hidden paragraph More text
