@@ -278,3 +278,5 @@ the PR")
     feedback.
 
 #### Hidden section
+
+##### Hidden paragraph
