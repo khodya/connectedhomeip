@@ -30,7 +30,9 @@ from mobly import asserts
 from zeroconf import ServiceBrowser, ServiceListener, Zeroconf
 
 import matter.clusters as Clusters
-from matter.testing.matter_testing import MatterBaseTest, TestStep, default_matter_test_main, has_feature, run_if_endpoint_matches
+from matter.testing.decorators import has_feature, run_if_endpoint_matches
+from matter.testing.matter_testing import MatterBaseTest
+from matter.testing.runner import TestStep, default_matter_test_main
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -989,21 +991,20 @@ async def verify_operational_network(test, ssid):
 
 class TC_CNET_4_11(MatterBaseTest):
 
-    @classmethod
-    def setup_class(cls):
+    def setup_class(self):
         """Remove default route from LAN interface to force traffic through Wi-Fi during test. (Linux only)"""
+        super().setup_class()
 
         os_name = detect_platform()
         if os_name == "linux":
             try:
-                cls._original_routes = asyncio.run(remove_lan_routes())
+                self._original_routes = asyncio.run(remove_lan_routes())
             except Exception as e:
                 logger.error("setup_class: Failed to setup network environment: %s", e)
-                cls._original_routes = []
+                self._original_routes = []
                 raise
 
-    @classmethod
-    def teardown_class(cls):
+    def teardown_class(self):
         """
         Restore original default routes after the test finishes (Linux only).
         Restore original Wi-Fi network on all platforms.
@@ -1011,7 +1012,7 @@ class TC_CNET_4_11(MatterBaseTest):
         os_name = detect_platform()
         if os_name == "linux":
             try:
-                original_routes = getattr(cls, "_original_routes", [])
+                original_routes = getattr(self, "_original_routes", [])
                 asyncio.run(restore_lan_routes(original_routes))
             except Exception as e:
                 logger.error("teardown_class: Failed to teardown network environment: %s", e)
@@ -1020,6 +1021,7 @@ class TC_CNET_4_11(MatterBaseTest):
             asyncio.run(restore_original_network())
         except Exception as e:
             logger.error("teardown_class: Failed to restore original Wi-Fi network: %s", e)
+        super().teardown_class()
 
     # Overrides default_timeout: Test includes several long waits, adjust timeout to accommodate.
     @property
